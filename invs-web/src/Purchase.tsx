@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search, Plus, Filter, Eye, Printer, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithFallback, DEMO_PURCHASES } from './demoData';
 
 interface PurchaseOrder {
   id: string;
@@ -17,15 +18,9 @@ function Purchase() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch real data from our new backend
-    fetch('http://localhost:3000/api/purchases')
-      .then(res => res.json())
+    fetchWithFallback<PurchaseOrder>('/purchases', DEMO_PURCHASES)
       .then(data => {
         setOrders(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching purchases:', err);
         setLoading(false);
       });
   }, []);

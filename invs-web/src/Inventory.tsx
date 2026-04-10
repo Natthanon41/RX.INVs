@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Search, Plus, Edit, Trash2 } from 'lucide-react';
+import { fetchWithFallback, DEMO_INVENTORY } from './demoData';
 
 interface InventoryItem {
   id: number;
@@ -15,15 +16,9 @@ function Inventory() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch real data from our new backend
-    fetch('http://localhost:3000/api/inventory')
-      .then(res => res.json())
+    fetchWithFallback<InventoryItem>('/inventory', DEMO_INVENTORY)
       .then(data => {
         setItems(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching inventory:', err);
         setLoading(false);
       });
   }, []);

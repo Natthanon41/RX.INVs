@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search, Plus, Filter, FileText, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithFallback, DEMO_REQUISITION } from './demoData';
 
 interface RequisitionRecord {
   id: string;
@@ -17,14 +18,9 @@ function Requisition() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/requisition')
-      .then(res => res.json())
+    fetchWithFallback<RequisitionRecord>('/requisition', DEMO_REQUISITION)
       .then(data => {
         setRecords(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching requisition records:', err);
         setLoading(false);
       });
   }, []);

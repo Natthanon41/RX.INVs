@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search, Plus, Filter, Eye, Printer, FileX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithFallback, DEMO_DISPENSE } from './demoData';
 
 interface DispenseRecord {
   id: string;
@@ -17,14 +18,9 @@ function Dispense() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/dispense')
-      .then(res => res.json())
+    fetchWithFallback<DispenseRecord>('/dispense', DEMO_DISPENSE)
       .then(data => {
         setRecords(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching dispense records:', err);
         setLoading(false);
       });
   }, []);
