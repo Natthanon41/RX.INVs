@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<TfrxReport Version="6.9.2" DotMatrixReport="False" IniFile="\Software\Fast Reports" PreviewOptions.Buttons="4095" PreviewOptions.Zoom="1" PrintOptions.Printer="Default" PrintOptions.PrintOnSheet="0" ReportOptions.CreateDate="45134.4507705324" ReportOptions.Description.Text="" ReportOptions.LastChange="45142.62916" ScriptLanguage="PascalScript" ScriptText.Text="procedure DialogPage1OnActivate(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;// date1.date:=now ;&#13;&#10;// date2.date:=now ;&#13;&#10;&#13;&#10;&#13;&#10;end;&#13;&#10;&#13;&#10;procedure Label1OnClick(Sender: TfrxComponent);&#13;&#10;begin&#13;&#10;&#13;&#10;end;&#13;&#10;&#13;&#10;begin&#13;&#10;&#13;&#10;end." OnReportPrint="DialogPage1OnActivate">
+  <Datasets>
+    <item DataSet="sum_per_drug_dep" DataSetName="per_drug_dep"/>
+  </Datasets>
+  <TfrxDataPage Name="Data" HGuides.Text="" VGuides.Text="" Height="1000" Left="0" Top="0" Width="1000">
+    <TfrxUniDACQuery Name="sum_per_drug_dep" UserName="per_drug_dep" CloseDataSource="True" FieldAliases.Text="" BCDToCurrency="False" IgnoreDupParams="False" SQL.Text="SELECT &#13;&#10;	di.DEPT_NAME,&#13;&#10;	d.DRUG_NAME,&#13;&#10;	SUM(c.QTY_ORDER * c.PACK_RATIO) AS cc       &#13;&#10;FROM sm_po sp&#13;&#10;LEFT JOIN sm_po_c c ON sp.SUB_PO_NO=c.SUB_PO_NO&#13;&#10;LEFT JOIN drug_gn d ON c.WORKING_CODE=d.WORKING_CODE&#13;&#10;LEFT JOIN dept_id di ON sp.DEPT_ID=di.DEPT_ID&#13;&#10;WHERE &#13;&#10;	sp.STOCK_ID='STOCK1' &#13;&#10;	AND sp.CONFIRM_DATE BETWEEN :date1 AND :date2                                    &#13;&#10;	AND (c.CANCEL_DISP IS NULL OR c.CANCEL_DISP='')&#13;&#10; AND di.DEPT_ID not LIKE 'HC%'    &#13;&#10;GROUP BY sp.DEPT_ID,c.WORKING_CODE&#13;&#10;order by  di.DEPT_NAME,d.DRUG_NAME                                               " SpecificOptions.Text="" PropData="05704C6566740384000470546F7002480A506172616D657465727301010654204E616D653D226461746531222044617461547970653D226674537472696E67222045787072657373696F6E3D22466F726D61744461746554696D652827595959596D6D6464272C64617465312E64617465292200010654204E616D653D226461746532222044617461547970653D226674537472696E67222045787072657373696F6E3D22466F726D61744461746554696D652827595959596D6D6464272C64617465322E6461746529220000"/>
+  </TfrxDataPage>
+  <TfrxReportPage Name="Page1" HGuides.Text="" VGuides.Text="" Orientation="poLandscape" PaperWidth="297" PaperHeight="210" PaperSize="9" LeftMargin="10" RightMargin="10" TopMargin="10" BottomMargin="10" ColumnWidth="0" ColumnPositions.Text="" Frame.Typ="0" MirrorMode="0" OnAfterPrint="DialogPage1OnActivate">
+    <TfrxMasterData Name="MasterData1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Frame.Typ="0" Height="26.45669291" Left="0" Top="172" Width="1046.92981" ColumnWidth="0" ColumnGap="0" DataSet="sum_per_drug_dep" DataSetName="per_drug_dep" RowCount="0">
+      <TfrxTableObject Name="TableObject2" AllowVectorExport="True" Left="22" Top="0">
+        <TfrxTableColumn Name="TableColumn6" Width="274.1906" MinWidth="0" MaxWidth="75.5906"/>
+        <TfrxTableColumn Name="TableColumn7" Width="524.1906" MinWidth="0" MaxWidth="75.5906"/>
+        <TfrxTableColumn Name="TableColumn8" Width="187.1906" MinWidth="0" MaxWidth="75.5906"/>
+        <TfrxTableRow Name="TableRow2" MinHeight="0" MaxHeight="0" Height="26.4566929133858">
+          <TfrxTableCell Name="TableCell6" AllowVectorExport="True" Restrictions="8" DataField="DEPT_NAME" DataSet="sum_per_drug_dep" DataSetName="per_drug_dep" Font.Charset="1" Font.Color="0" Font.Height="-19" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="15" ParentFont="False" Text="[per_drug_dep.&#34;DEPT_NAME&#34;]"/>
+          <TfrxTableCell Name="TableCell7" AllowVectorExport="True" Restrictions="8" DataField="DRUG_NAME" DataSet="sum_per_drug_dep" DataSetName="per_drug_dep" Font.Charset="1" Font.Color="0" Font.Height="-19" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="15" ParentFont="False" Text="[per_drug_dep.&#34;DRUG_NAME&#34;]"/>
+          <TfrxTableCell Name="TableCell8" AllowVectorExport="True" Restrictions="8" DataSet="sum_per_drug_dep" DataSetName="per_drug_dep" DisplayFormat.FormatStr="%2.2n" DisplayFormat.Kind="fkNumeric" Font.Charset="1" Font.Color="0" Font.Height="-19" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="15" HAlign="haRight" ParentFont="False" Text="[per_drug_dep.&#34;cc&#34;]"/>
+        </TfrxTableRow>
+      </TfrxTableObject>
+    </TfrxMasterData>
+    <TfrxReportTitle Name="ReportTitle1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Frame.Typ="0" Height="79.37013" Left="0" Top="16" Width="1046.92981">
+      <TfrxMemoView Name="Memo1" AllowVectorExport="True" Left="79.37013" Top="-13" Width="865.51237" Height="37.7953" Font.Charset="1" Font.Color="-16777208" Font.Height="-27" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="0" HAlign="haCenter" ParentFont="False" Text="รายงานสรุปการเบิกยาของแต่ละหน่วยงาน"/>
+      <TfrxMemoView Name="Memo2" AllowVectorExport="True" Left="30.23624" Top="23.03154" Width="982.6778" Height="30.23624" Font.Charset="1" Font.Color="-16777208" Font.Height="-27" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="0" HAlign="haCenter" ParentFont="False" Text="ระหว่างวันที่ [formatdatetime('d mmmm',date1.date)] [StrToInt(formatdatetime('YYYY',date1.date))+543]  ถึง [formatdatetime('d mmmm',date2.date)] [StrToInt(formatdatetime('YYYY',date2.date))+543]">
+        <Formats>
+          <item/>
+          <item/>
+          <item/>
+          <item/>
+        </Formats>
+      </TfrxMemoView>
+    </TfrxReportTitle>
+    <TfrxColumnHeader Name="ColumnHeader1" FillType="ftBrush" FillGap.Top="0" FillGap.Left="0" FillGap.Bottom="0" FillGap.Right="0" Frame.Typ="0" Height="34.51173291" Left="0" Top="116" Width="1046.92981">
+      <TfrxTableObject Name="TableObject1" AllowVectorExport="True" Left="22" Top="8.05504">
+        <TfrxTableColumn Name="TableColumn1" Width="273.5906" MinWidth="0" MaxWidth="75.5906"/>
+        <TfrxTableColumn Name="TableColumn2" Width="524.5906" MinWidth="0" MaxWidth="75.5906"/>
+        <TfrxTableColumn Name="TableColumn3" Width="186.5906" MinWidth="0" MaxWidth="75.5906"/>
+        <TfrxTableRow Name="TableRow1" MinHeight="0" MaxHeight="0" Height="26.4566929133858">
+          <TfrxTableCell Name="TableCell1" AllowVectorExport="True" Restrictions="8" Font.Charset="1" Font.Color="0" Font.Height="-19" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="15" HAlign="haCenter" ParentFont="False" Text="หน่วยงาน"/>
+          <TfrxTableCell Name="TableCell2" AllowVectorExport="True" Restrictions="8" Font.Charset="1" Font.Color="0" Font.Height="-19" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="15" HAlign="haCenter" ParentFont="False" Text="รายการยา"/>
+          <TfrxTableCell Name="TableCell3" AllowVectorExport="True" Restrictions="8" Font.Charset="1" Font.Color="0" Font.Height="-19" Font.Name="AngsanaUPC" Font.Style="0" Frame.Typ="15" HAlign="haCenter" ParentFont="False" Text="จำนวน"/>
+        </TfrxTableRow>
+      </TfrxTableObject>
+    </TfrxColumnHeader>
+  </TfrxReportPage>
+  <TfrxDialogPage Name="DialogPage1" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" HGuides.Text="" VGuides.Text="" DoubleBuffered="False" Height="305" ClientHeight="273" Left="485" Top="225" Width="382" Scaled="True" ClientWidth="376" OnActivate="DialogPage1OnActivate">
+    <TfrxLabelControl Name="Label1" Anchors="0" Left="17" Top="10" Width="341" Height="32" Font.Charset="1" Font.Color="-16777208" Font.Height="-27" Font.Name="Arial" Font.Style="0" ParentFont="False" ShowHint="True" Alignment="taCenter" Caption="รายงานสรุปการเบิกยาของแต่ละหน่วยงาน" Color="-16777201" OnClick="Label1OnClick"/>
+    <TfrxDateEditControl Name="date1" Left="78" Top="97" Width="96" Height="24" ShowHint="True" Color="-16777211" Date="45134" Time="0.62401077546383" WeekNumbers="False"/>
+    <TfrxDateEditControl Name="date2" Left="205" Top="97" Width="93" Height="24" ShowHint="True" Color="-16777211" Date="45134" Time="0.624127800925635" WeekNumbers="False"/>
+    <TfrxBitBtnControl Name="bt1" Left="78" Top="163" Width="220" Height="56" Font.Charset="1" Font.Color="-16777208" Font.Height="-13" Font.Name="Arial" Font.Style="0" ParentFont="False" ShowHint="True" Glyph.PropData="04446174610AE2010000DE010000424DDE01000000000000760000002800000024000000120000000100040000000000680100000000000000000000100000000000000000000000000080000080000000808000800000008000800080800000C0C0C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF003333333333333333333333333333333333330000333333333333333333333333F3333333333300003333344333333333333333388F3333333333000033334224333333333333338338F3333333330000333422224333333333333833338F3333333300003342222224333333333383333338F3333333000034222A22224333333338F338F3338F33333300003222A3A2224333333338F3838F338F33333300003A2A333A222433333338F83338F338F33333000033A33333A222433333338333338F338F33330000333333333A222433333333333338F338F33300003333333333A222433333333333338F338F33000033333333333A222433333333333338F338F30000333333333333A222433333333333338F338F00003333333333333A224333333333333338F38F000033333333333333A223333333333333338F830000333333333333333A3333333333333333383300003333333333333333333333333333333333330000" Kind="bkOK" Caption="OK" ModalResult="1" NumGlyphs="2" OnClick="DialogPage1OnActivate"/>
+  </TfrxDialogPage>
+</TfrxReport>
