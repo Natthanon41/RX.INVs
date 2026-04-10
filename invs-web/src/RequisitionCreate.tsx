@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Save, Plus, Trash2, Send, Activity, Info } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Send, Activity, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface RequisitionItem {

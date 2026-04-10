@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { 
   ShoppingCart, 
   Package, 
@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 
 function Dashboard() {
-  const location = useLocation();
   const menus = [
     { name: 'ระบบจัดซื้อ', icon: <ShoppingCart size={20} />, path: '/dashboard/purchase' },
     { name: 'ระบบคลัง', icon: <Package size={20} />, path: '/dashboard/inventory' },

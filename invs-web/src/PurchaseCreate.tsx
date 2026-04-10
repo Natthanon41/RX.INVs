@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Save, Plus, Trash2, CheckCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Plus, Trash2, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface PurchaseItem {
@@ -151,7 +151,7 @@ function PurchaseCreate() {
                   <tr>
                     <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>ยังไม่มีรายการสินค้า กรุณากดปุ่มเพิ่มแถวรายการ</td>
                   </tr>
-                ) : items.map((item, index) => (
+                ) : items.map((item) => (
                   <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
                     <td style={{ padding: '1rem' }}>
                       <select 
