@@ -30,11 +30,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: invs-web
-        run: npm ci
+        run: npm install
 
       - name: Build
         working-directory: invs-web
-        run: npm run build
+        run: npx vite build
 
       - name: Copy index.html to 404.html
         working-directory: invs-web
