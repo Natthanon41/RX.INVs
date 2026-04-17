@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 require('dotenv').config();
 
 const app = express();
@@ -38,8 +40,61 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
+// Authentication Middleware
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.status(401).json({ message: 'Access Denied: No Token Provided' });
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: 'Invalid or Expired Token' });
+    req.user = user;
+    next();
+  });
+};
+
+// Login Route
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Hash password to MD5 to match INVS legacy format
+    const md5Password = crypto.createHash('md5').update(password).digest('hex');
+
+    const [users] = await pool.query(
+      'SELECT UserCode, firstName, lastName, utype FROM profile WHERE UserCode = ? AND Password = ? AND Enable = "Y"',
+      [username, md5Password]
+    );
+
+    if (users.length === 0) {
+      return res.status(401).json({ message: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง' });
+    }
+
+    const user = users[0];
+    const token = jwt.sign(
+      { id: user.UserCode, name: `${user.firstName} ${user.lastName}`, role: user.utype },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      status: 'success',
+      token,
+      user: {
+        id: user.UserCode,
+        name: `${user.firstName} ${user.lastName}`,
+        role: user.utype
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+  }
+});
+
 // Inventory Data Route (Real DB)
-app.get('/api/inventory', async (req, res) => {
+app.get('/api/inventory', authenticateToken, async (req, res) => {
     try {
         // Querying drug_vn for drug details and med_inv for current stock levels
         // Note: Field names are based on standard legacy INVS schema patterns
@@ -68,7 +123,7 @@ app.get('/api/inventory', async (req, res) => {
 });
 
 // Purchase Orders Data Route (Real DB)
-app.get('/api/purchases', async (req, res) => {
+app.get('/api/purchases', authenticateToken, async (req, res) => {
     try {
         const [rows] = await pool.query(`
             SELECT 
@@ -90,7 +145,7 @@ app.get('/api/purchases', async (req, res) => {
 });
 
 // Dispensing Data Route (Real DB)
-app.get('/api/dispense', async (req, res) => {
+app.get('/api/dispense', authenticateToken, async (req, res) => {
     try {
         const [rows] = await pool.query(`
             SELECT 
@@ -112,7 +167,7 @@ app.get('/api/dispense', async (req, res) => {
 });
 
 // Requisition Data Route (Real DB)
-app.get('/api/requisition', async (req, res) => {
+app.get('/api/requisition', authenticateToken, async (req, res) => {
     try {
         const [rows] = await pool.query(`
             SELECT 

@@ -1,4 +1,5 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
 import { 
   LayoutDashboard,
   ShoppingCart, 
@@ -15,6 +16,14 @@ import {
 } from 'lucide-react';
 
 function Dashboard() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   const menus = [
     { name: 'หน้าแรก', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
     { name: 'ระบบจัดซื้อ', icon: <ShoppingCart size={20} />, path: '/dashboard/purchase' },
@@ -48,10 +57,10 @@ function Dashboard() {
         </nav>
         
         <div className="sidebar-footer">
-          <Link to="/" className="nav-item logout-btn">
+          <button onClick={handleLogout} className="nav-item logout-btn" style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}>
             <span className="nav-icon"><LogOut size={20} /></span>
             <span className="nav-text">ออกจากระบบ</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -77,8 +86,8 @@ function Dashboard() {
             <div className="user-profile">
               <UserCircle size={32} className="user-avatar" />
               <div className="user-info">
-                <span className="user-name">ผู้ดูแลระบบ</span>
-                <span className="user-role">Admin</span>
+                <span className="user-name">{user?.name || 'ผู้ใช้งาน'}</span>
+                <span className="user-role">{user?.role === 'admin' ? 'ผู้ดูแลระบบ' : 'เจ้าหน้าที่'}</span>
               </div>
             </div>
           </div>
