@@ -1,6 +1,36 @@
 # RX.INVs Project
 
+![Demo](https://img.shields.io/badge/Live-Demo-brightgreen.svg) **[Live Demo on GitHub Pages](https://natthanon41.github.io/RX.INVs/)**  
+*(Features a Demo Mode with Mock Data when the backend is unavailable)*
+
 This project consists of a backend server and a web-based frontend for the INVs system.
+
+## Screenshots
+
+<details open>
+<summary><b>Click to expand/collapse screenshots</b></summary>
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Inventory Management
+
+![Inventory](screenshots/inventory.png)
+
+### Purchase Orders
+
+![Purchase](screenshots/purchase.png)
+
+### Dispense
+
+![Dispense](screenshots/dispense.png)
+
+### Requisition
+
+![Requisition](screenshots/requisition.png)
+
+</details>
 
 ## Project Structure
 
