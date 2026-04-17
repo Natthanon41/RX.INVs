@@ -38,6 +38,23 @@ export const DEMO_REQUISITION = [
   { id: 'REQ-2026-005', date: '2026-04-06', department: 'ทันตกรรม', priority: 'ปกติ', items: 5, status: 'รออนุมัติ' },
 ];
 
+export const DEMO_CHART_PURCHASE = [
+  { month: 'ม.ค.', amount: 450000 },
+  { month: 'ก.พ.', amount: 520000 },
+  { month: 'มี.ค.', amount: 480000 },
+  { month: 'เม.ย.', amount: 610000 },
+  { month: 'พ.ค.', amount: 590000 },
+  { month: 'มิ.ย.', amount: 650000 },
+];
+
+export const DEMO_CHART_CATEGORIES = [
+  { name: 'ยาสามัญ', value: 45 },
+  { name: 'ยาปฏิชีวนะ', value: 25 },
+  { name: 'เวชภัณฑ์', value: 20 },
+  { name: 'ยาเสพติด', value: 5 },
+  { name: 'อื่นๆ', value: 5 },
+];
+
 // Helper: try to fetch from backend, fall back to demo data  
 const API_BASE = 'http://localhost:3000/api';
 

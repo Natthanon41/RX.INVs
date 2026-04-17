@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Login from './Login';
 import Dashboard from './Dashboard';
+import DashboardOverview from './DashboardOverview';
 import Inventory from './Inventory';
 import Purchase from './Purchase';
 import PurchaseCreate from './PurchaseCreate';
@@ -14,6 +15,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />}>
+        <Route index element={<DashboardOverview />} />
         {/* Child routes that render inside Outlet of Dashboard */}
         <Route path="inventory" element={<Inventory />} />
         <Route path="purchase" element={<Purchase />} />

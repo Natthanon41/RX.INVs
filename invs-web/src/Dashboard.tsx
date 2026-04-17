@@ -1,5 +1,6 @@
 import { Link, Outlet } from 'react-router-dom';
 import { 
+  LayoutDashboard,
   ShoppingCart, 
   Package, 
   ArrowUpRight, 
@@ -15,6 +16,7 @@ import {
 
 function Dashboard() {
   const menus = [
+    { name: 'หน้าแรก', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
     { name: 'ระบบจัดซื้อ', icon: <ShoppingCart size={20} />, path: '/dashboard/purchase' },
     { name: 'ระบบคลัง', icon: <Package size={20} />, path: '/dashboard/inventory' },
     { name: 'ระบบจ่าย', icon: <ArrowUpRight size={20} />, path: '/dashboard/dispense' },
