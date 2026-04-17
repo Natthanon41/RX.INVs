@@ -144,6 +144,67 @@ app.get('/api/purchases', authenticateToken, async (req, res) => {
     }
 });
 
+// Update Inventory Item
+app.put('/api/inventory/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const { name, category, quantity, unit } = req.body;
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+        
+        // Update drug_vn
+        await connection.query(
+            'UPDATE drug_vn SET drug_name = ?, drug_type = ?, drug_unit = ? WHERE drug_id = ?',
+            [name, category, unit, id]
+        );
+        
+        // Update med_inv
+        await connection.query(
+            'UPDATE med_inv SET stock_qty = ? WHERE drug_id = ?',
+            [quantity, id]
+        );
+        
+        await connection.commit();
+        res.json({ status: 'success', message: 'แก้ไขรายการสำเร็จ' });
+    } catch (error) {
+        await connection.rollback();
+        console.error('Inventory update failed:', error);
+        res.status(500).json({ status: 'error', message: error.message });
+    } finally {
+        connection.release();
+    }
+});
+// Delete Inventory Item
+app.delete('/api/inventory/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+        await connection.query('DELETE FROM med_inv WHERE drug_id = ?', [id]);
+        await connection.query('DELETE FROM drug_vn WHERE drug_id = ?', [id]);
+        await connection.commit();
+        res.json({ status: 'success', message: 'ลบรายการสำเร็จ' });
+    } catch (error) {
+        await connection.rollback();
+        console.error('Inventory delete failed:', error);
+        res.status(500).json({ status: 'error', message: error.message });
+    } finally {
+        connection.release();
+    }
+});
+
+// Cancel Purchase Order (Soft Delete)
+app.delete('/api/purchases/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('UPDATE ms_po SET po_status = "ยกเลิก" WHERE po_number = ?', [id]);
+        res.json({ status: 'success', message: 'ยกเลิกใบสั่งซื้อสำเร็จ' });
+    } catch (error) {
+        console.error('Purchase cancel failed:', error);
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+});
+
 // Dispensing Data Route (Real DB)
 app.get('/api/dispense', authenticateToken, async (req, res) => {
     try {

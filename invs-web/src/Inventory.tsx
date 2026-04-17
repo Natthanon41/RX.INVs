@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, Plus, Edit, Trash2 } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, X } from 'lucide-react';
 import { fetchWithFallback, DEMO_INVENTORY } from './demoData';
 
 interface InventoryItem {
@@ -14,6 +14,8 @@ interface InventoryItem {
 function Inventory() {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchWithFallback<InventoryItem>('/inventory', DEMO_INVENTORY)
@@ -23,6 +25,61 @@ function Inventory() {
       });
   }, []);
 
+  const handleDelete = async (id: number) => {
+    if (window.confirm('คุณต้องการลบรายการเวชภัณฑ์นี้ใช่หรือไม่?')) {
+      try {
+        const result = await fetchWithFallback('/inventory/' + id, [], { 
+          method: 'DELETE' 
+        });
+        
+        if (result.status === 'success') {
+          setItems(prev => prev.filter(item => item.id !== id));
+          alert('ลบรายการสำเร็จ');
+        } else {
+          throw new Error(result.message || 'Delete failed');
+        }
+      } catch (err: any) {
+        alert('เกิดข้อผิดพลาด: ' + err.message);
+      }
+    }
+  };
+
+  const handleEdit = (item: InventoryItem) => {
+    setEditingItem({ ...item });
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    setIsSubmitting(true);
+    try {
+      const result = await fetchWithFallback('/inventory/' + editingItem.id, [], {
+        method: 'PUT',
+        body: JSON.stringify({
+          name: editingItem.name,
+          category: editingItem.category,
+          quantity: editingItem.quantity,
+          unit: editingItem.unit
+        })
+      });
+
+      if (result.status === 'success') {
+        setItems(prev => prev.map(item => 
+          item.id === editingItem.id ? { ...editingItem, status: editingItem.quantity > 100 ? 'ปกติ' : 'ใกล้หมด' } : item
+        ));
+        setEditingItem(null);
+        alert('แก้ไขรายการสำเร็จ');
+      } else {
+        throw new Error(result.message || 'Update failed');
+      }
+    } catch (err: any) {
+      alert('เกิดข้อผิดพลาด: ' + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="inventory-page">
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -30,7 +87,7 @@ function Inventory() {
           <h1 className="welcome-title">ระบบบริหารคลังเวชภัณฑ์</h1>
           <p className="welcome-subtitle">จัดการรายการยาและเวชภัณฑ์ทั้งหมดในคลัง</p>
         </div>
-        <button className="btn btn-primary">
+        <button className="btn btn-primary" onClick={() => alert('ฟีเจอร์ "เพิ่มรายการใหม่" กำลังพัฒนาใน Phase ถัดไป')}>
           <Plus size={20} /> เพิ่มรายการใหม่
         </button>
       </div>
@@ -98,10 +155,15 @@ function Inventory() {
                     </td>
                     <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                        <button className="icon-btn" style={{ color: 'var(--secondary)' }} title="แก้ไข">
+                        <button className="icon-btn" style={{ color: 'var(--secondary)' }} title="แก้ไข" onClick={() => handleEdit(item)}>
                           <Edit size={18} />
                         </button>
-                        <button className="icon-btn" style={{ color: 'var(--error)' }} title="ลบ">
+                        <button 
+                          className="icon-btn" 
+                          style={{ color: 'var(--error)' }} 
+                          title="ลบ"
+                          onClick={() => handleDelete(item.id)}
+                        >
                           <Trash2 size={18} />
                         </button>
                       </div>
@@ -113,6 +175,86 @@ function Inventory() {
           </table>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {editingItem && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          backdropFilter: 'blur(4px)'
+        }}>
+          <div className="card" style={{ width: '500px', padding: '2rem', position: 'relative' }}>
+            <button 
+              onClick={() => setEditingItem(null)}
+              style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+            >
+              <X size={24} />
+            </button>
+            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.25rem', fontWeight: 'bold' }}>แก้ไขรายการเวชภัณฑ์</h2>
+            <form onSubmit={handleUpdate}>
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label className="form-label">ชื่อเวชภัณฑ์</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  value={editingItem.name} 
+                  onChange={(e) => setEditingItem({...editingItem, name: e.target.value})}
+                  required 
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label className="form-label">หมวดหมู่</label>
+                <select 
+                  className="input-field" 
+                  value={editingItem.category}
+                  onChange={(e) => setEditingItem({...editingItem, category: e.target.value})}
+                  required
+                >
+                  <option value="ยาสามัญ">ยาสามัญ</option>
+                  <option value="ยาปฏิชีวนะ">ยาปฏิชีวนะ</option>
+                  <option value="เวชภัณฑ์ทางการแพทย์">เวชภัณฑ์ทางการแพทย์</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label">จำนวนคงเหลือ</label>
+                  <input 
+                    type="number" 
+                    className="input-field" 
+                    value={editingItem.quantity}
+                    onChange={(e) => setEditingItem({...editingItem, quantity: Number(e.target.value)})}
+                    required 
+                  />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label">หน่วย</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    value={editingItem.unit}
+                    onChange={(e) => setEditingItem({...editingItem, unit: e.target.value})}
+                    required 
+                  />
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button type="button" className="btn outline-btn" onClick={() => setEditingItem(null)}>ยกเลิก</button>
+                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                  {isSubmitting ? 'กำลังบันทึก...' : 'บันทึกการแก้ไข'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

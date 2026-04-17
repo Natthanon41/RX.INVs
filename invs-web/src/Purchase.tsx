@@ -25,6 +25,28 @@ function Purchase() {
       });
   }, []);
 
+  const handleCancel = async (id: string) => {
+    if (window.confirm(`คุณต้องการยกเลิกใบสั่งซื้อ ${id} ใช่หรือไม่?`)) {
+      try {
+        const result = await fetchWithFallback('/purchases/' + id, [], { 
+          method: 'DELETE' 
+        });
+        
+        if (result.status === 'success') {
+          // Update local state to show as cancelled
+          setOrders(prev => prev.map(order => 
+            order.id === id ? { ...order, status: 'ยกเลิก' } : order
+          ));
+          alert('ยกเลิกใบสั่งซื้อสำเร็จ');
+        } else {
+          throw new Error(result.message || 'Cancel failed');
+        }
+      } catch (err: any) {
+        alert('เกิดข้อผิดพลาด: ' + err.message);
+      }
+    }
+  };
+
   const getStatusBadgeStyle = (status: string) => {
     switch(status) {
         case 'อนุมัติแล้ว':
@@ -133,7 +155,13 @@ function Purchase() {
                           <button className="icon-btn" style={{ color: '#1e40af' }} title="พิมพ์เอกสาร">
                             <Printer size={18} />
                           </button>
-                          <button className="icon-btn" style={{ color: 'var(--error)' }} title="ยกเลิกใบสั่งซื้อ">
+                          <button 
+                            className="icon-btn" 
+                            style={{ color: 'var(--error)' }} 
+                            title="ยกเลิกใบสั่งซื้อ"
+                            onClick={() => handleCancel(order.id)}
+                            disabled={order.status === 'ยกเลิก'}
+                          >
                             <Trash2 size={18} />
                           </button>
                         </div>

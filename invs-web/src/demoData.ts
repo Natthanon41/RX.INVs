@@ -58,13 +58,34 @@ export const DEMO_CHART_CATEGORIES = [
 // Helper: try to fetch from backend, fall back to demo data  
 const API_BASE = 'http://localhost:3000/api';
 
-export async function fetchWithFallback<T>(endpoint: string, demoData: T[]): Promise<T[]> {
+export async function fetchWithFallback<T>(
+  endpoint: string, 
+  demoData: T[], 
+  options: RequestInit = {}
+): Promise<any> {
   try {
-    const res = await fetch(`${API_BASE}${endpoint}`, { signal: AbortSignal.timeout(3000) });
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...(options.headers as any || {}),
+    };
+
+    const res = await fetch(`${API_BASE}${endpoint}`, { 
+      ...options, 
+      headers,
+      signal: AbortSignal.timeout(3000) 
+    });
+
     if (!res.ok) throw new Error('API error');
     return await res.json();
-  } catch {
-    console.log(`⚡ Demo Mode: Using sample data for ${endpoint}`);
+  } catch (err) {
+    if (options.method && options.method !== 'GET') {
+      console.log(`⚡ Demo Mode: Simulating ${options.method} success for ${endpoint}`);
+      return { status: 'success', message: 'Demo operation successful' };
+    }
+    
+    console.log(`⚡ Demo Mode: Using sample data for ${endpoint}. Error: ${err}`);
     return demoData;
   }
 }
